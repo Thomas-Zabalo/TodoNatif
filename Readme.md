@@ -11,7 +11,7 @@ L'application fonctionne en utilisant un contexte (`TodoContext`) pour gérer l'
 
 ### Se connecter
 - Utilisez les identifiants de connexion suivants pour accéder à l'application :
-  - Email : `thomas.zabalo@etu.iut-tlse3.fr`
+  - Email : ``
   - Mot de passe : `userpassword`
 
 ### Tâches en cours
