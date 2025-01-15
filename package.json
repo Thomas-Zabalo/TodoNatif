@@ -9,10 +9,28 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@expo/metro-runtime": "^4.0.0",
+    "@react-native-async-storage/async-storage": "^1.24.0",
+    "@react-native-community/checkbox": "^0.5.17",
+    "@react-native-picker/picker": "^2.9.0",
+    "@react-navigation/bottom-tabs": "^7.0.5",
+    "@react-navigation/native": "^7.0.3",
+    "@react-navigation/stack": "^7.0.4",
+    "axios": "^1.7.9",
+    "dotenv": "^16.4.5",
     "expo": "~52.0.7",
+    "expo-checkbox": "^4.0.0",
+    "expo-linear-gradient": "^14.0.1",
     "expo-status-bar": "~2.0.0",
+    "express": "^4.21.1",
+    "mysql": "^2.18.1",
+    "npm": "^10.9.0",
     "react": "18.3.1",
-    "react-native": "0.76.2"
+    "react-native": "0.76.2",
+    "react-native-check-box": "^2.1.7",
+    "react-native-linear-gradient": "^2.8.3",
+    "react-native-progress": "^5.0.1",
+    "react-native-web": "^0.19.13"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
