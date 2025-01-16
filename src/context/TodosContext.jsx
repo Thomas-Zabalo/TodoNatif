@@ -11,6 +11,7 @@ export function TodoProvider({ children }) {
   const [categories, setCategories] = useState([]);
   const [priorities, setPriorities] = useState([]);
   const [userId, setUserId] = useState(null);
+  const [fetchLimit, setFetchLimit] = useState(true)
 
   // Charger l'ID utilisateur
   useEffect(() => {
@@ -41,7 +42,7 @@ export function TodoProvider({ children }) {
   const fetchTasks = async () => {
     try {
       setLoader(true)
-      const response = await axios.get(`https://zabalo.alwaysdata.net/todoapp/index.php/tasks/${userId}`)
+      const response = await axios.get(`https://zabalo.alwaysdata.net/todoapp/index.php/tasks/${userId}?limit=5`)
       setTimeout(() => {
         setTodo(response.data); // Mettre à jour les tâches
         setLoader(false); // Désactiver le loader après le délai
@@ -129,9 +130,11 @@ export function TodoProvider({ children }) {
   return (
     <TodoContext.Provider
       value={{
+        fetchLimit,
         todo,
         categories,
         priorities,
+        setFetchLimit,
         fetchTasks,
         handleAddTodo,
         toggleTaskCompletion,

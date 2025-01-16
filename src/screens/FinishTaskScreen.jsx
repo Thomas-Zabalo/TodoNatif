@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'; // N'oubliez pas d'ajouter useState
 import { StatusBar, StyleSheet, View } from 'react-native';
-import { FinishItems } from '../components/FinishItems';
+import {FinishItems} from '../components/FinishItems'; // Importer FinishItems
 import { getId } from '../utils/LocalStorage';
 import axios from 'axios';
 

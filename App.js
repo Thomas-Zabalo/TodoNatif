@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -11,7 +12,6 @@ import HomeScreen from './src/screens/HomeScreen';
 import FinishedTasksScreen from './src/screens/FinishTaskScreen';
 import ConnexionScreen from './src/screens/ConnexionScreen';
 import TaskDetailScreen from './src/screens/DetailsScreen';
-
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();

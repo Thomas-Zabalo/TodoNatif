@@ -1,12 +1,15 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { StyleSheet, TextInput, Button, View, Modal, Text, StatusBar } from 'react-native';
+import { StyleSheet, TextInput, Button, View, Modal, Text, StatusBar, TouchableOpacity, Platform } from 'react-native';
 import { TodoList } from '../components/TodoList';
 import { Picker } from '@react-native-picker/picker';
 import { TodoContext } from '../context/TodosContext';
 import { getId, setPref } from '../utils/LocalStorage';
+import NetworkStatus from '../components/Netinfo';
 
 export default function HomeScreen({ navigation }) {
   const {
+    fetchLimit,
+    setFetchLimit,
     todo,
     categories,
     priorities,
@@ -26,12 +29,34 @@ export default function HomeScreen({ navigation }) {
   const [ascendingSort, setAscendingSort] = useState(true); // État de tri ascendant
   const [pref, setPrefState] = useState(null); // État de préférence de tri
 
+  const tasksToDisplay = fetchLimit ? todo.slice(0, 5) : todo;
+
   // Filtrage des tâches par catégorie et priorité
-  const filteredTasks = todo.filter((task) => {
+  const filteredTasks = tasksToDisplay.filter((task) => {
     const matchesCategory = categoryFilter === 'All' || task.categorie_id === categoryFilter; // Vérifie si la catégorie correspond
     const matchesPriority = priorityFilter === 'All' || task.importance_id === priorityFilter; // Vérifie si la priorité correspond
     return matchesCategory && matchesPriority; // Retourne les tâches qui correspondent aux filtres
   });
+
+
+  // Tri des tâches après filtrage et limitation
+  const sortedTasks = [...tasksToDisplay].sort((a, b) => {
+    if (pref === "asc") {
+      return a.titre.localeCompare(b.titre);  // Tri ascendant (par titre)
+    } else {
+      return b.titre.localeCompare(a.titre);  // Tri descendant (par titre)
+    }
+  });
+
+  // Si vous voulez trier par priorité, vous pouvez aussi faire ça :
+  const sortedByPriority = [...tasksToDisplay].sort((a, b) => {
+    if (a.importance_id > b.importance_id) return 1;
+    if (a.importance_id < b.importance_id) return -1;
+    return 0;
+  });
+
+  // Vous pouvez choisir quel tri appliquer : tri par titre ou tri par priorité
+  const tasksToDisplaySorted = pref === "priority" ? sortedByPriority : sortedTasks;
 
   const sortOnName = async () => {
     const newPref = pref === "asc" ? "desc" : "asc"; // Détermine la préférence de tri
@@ -39,14 +64,6 @@ export default function HomeScreen({ navigation }) {
     setPrefState(newPref); // Met à jour l'état de préférence
     setAscendingSort((prevState) => !prevState);  // Inverse l'état de tri
   };
-
-  const sortedTasks = [...todo].sort((a, b) => {
-    if (pref === "asc") {
-      return a.titre.localeCompare(b.titre);  // Tri ascendant
-    } else {
-      return b.titre.localeCompare(a.titre);  // Tri descendant
-    }
-  });
 
   const handleAdd = async () => {
     // Vérifie si newPriority et newCategory sont bien définis
@@ -58,7 +75,7 @@ export default function HomeScreen({ navigation }) {
     // Appel à handleAddTodo en envoyant les IDs appropriés
     const success = await handleAddTodo(newName, newCategory, newPriority);
     if (success) {
-      fetchTasks(); // Rafraîchir la liste des tâches
+      fetchTasks();
       setModalVisible(false);
       setNewName('');
       setNewCategory(null);
@@ -98,6 +115,9 @@ export default function HomeScreen({ navigation }) {
       });
   }, [categoryFilter, priorityFilter, userId, updateTasks]);
 
+  function OnChangeLimit() {
+    setFetchLimit((prevState) => !prevState); // Alterner l'état fetchLimit
+  }
 
   return (
     <View style={styles.container}>
@@ -108,6 +128,7 @@ export default function HomeScreen({ navigation }) {
         showHideTransition="slide"
         hidden="visible"
       />
+      <NetworkStatus />
       <TodoList
         todo={sortedTasks}
         onComplete={toggleTaskCompletion}
@@ -116,6 +137,17 @@ export default function HomeScreen({ navigation }) {
         setModalVisible={setModalVisible}
         ascendingSort={ascendingSort}
       />
+
+      {todo.length > 5 && (
+        <View style={styles.alltasks}>
+          <TouchableOpacity onPress={OnChangeLimit}>
+            <Text style={{ color: 'blue' }}>
+              {fetchLimit ? 'Voir plus' : 'Voir moins'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
 
       <View style={styles.filterContainer}>
         <Picker
@@ -149,12 +181,15 @@ export default function HomeScreen({ navigation }) {
 
       <Modal
         animationType="slide"
+        backdropColor="transparent"
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
       >
-        <View style={styles.modalContainer}>
-          <View>
+        <View style={[styles.modalContainer, {
+          backgroundColor: Platform.OS === 'ios' ? 'rgba(0, 0, 0, 0.5)' : 'rgba(0, 0, 0, 0.8)'
+        }]}>
+          <View style={styles.modal}>
             <Text style={styles.modalTitle}>Ajouter une tâche</Text>
             <TextInput
               style={styles.input}
@@ -191,7 +226,7 @@ export default function HomeScreen({ navigation }) {
           </View>
         </View>
       </Modal>
-    </View>
+    </View >
   );
 }
 
@@ -200,6 +235,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F2F2F7',
     paddingTop: "15%",
+  },
+  alltasks: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 10
   },
   filterContainer: {
     flexDirection: 'row', // Pour disposer les pickers horizontalement
@@ -214,35 +255,21 @@ const styles = StyleSheet.create({
   pickermodal: {
     width: '100%',  // Ajuste la largeur de chaque picker
   },
-  floatingButton: {
-    position: 'absolute',
-    bottom: 20,
-    right: 20,
-    backgroundColor: '#EBC450',
-    width: 50,
-    height: 50,
-    borderRadius: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
-    elevation: 5,
-  },
-  floatingButtonText: {
-    color: '#fff',
-    fontSize: 28,
-    fontWeight: 'bold',
-  },
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+  },
+  modal: {
+    width: '80%',
+    padding: 20,
+    backgroundColor: '#000000',
+    borderRadius: 10,
+    elevation: 20,
   },
   modalTitle: {
-    // fontSize: 18,
+    color: '#fff',
+    fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
   },
