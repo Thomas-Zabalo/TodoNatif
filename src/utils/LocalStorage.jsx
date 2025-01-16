@@ -26,6 +26,15 @@ export const setPref = async (pref) => {
   }
 };
 
+export const setLang = async (lang) => {
+  try {
+    await AsyncStorage.setItem('lang', lang);
+  }
+  catch (error) {
+    console.error('Erreur lors du stockage de la préférence de la langue :', error);
+  }
+};
+
 // Fonction pour récupérer un token
 export const getToken = async () => {
   try {
@@ -58,6 +67,18 @@ export const getPref = async () => {
   }
   catch (error) {
     console.error('Erreur lors de la récupération de la préférence :', error);
+  }
+};
+
+export const getLang = async () => {
+  try {
+    const lang = await AsyncStorage.getItem('lang');
+    if (lang !== null) {
+      return lang;
+    }
+  }
+  catch (error) {
+    console.error('Erreur lors de la récupération de la préférence de la langue:', error);
   }
 };
 

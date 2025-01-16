@@ -3,8 +3,11 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-nati
 import Checkbox from 'expo-checkbox'; // Pour la case à cocher
 import { Ionicons } from 'react-native-vector-icons'; // Icône de modification
 import { TodoContext } from '../context/TodosContext';
+import { useTranslation } from 'react-i18next';
 
 export function FinishItems({ finishedTasks, onTasksUpdated }) {
+    const { t } = useTranslation();
+
     const [editing, setEditing] = useState(false); // Pour activer/désactiver le mode édition
     const [selectedTasks, setSelectedTasks] = useState([]); // Suivi des tâches sélectionnées pour suppression
     const { deleteTask } = useContext(TodoContext);
@@ -37,7 +40,7 @@ export function FinishItems({ finishedTasks, onTasksUpdated }) {
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-                <Text style={styles.title}>Tâches réalisées</Text>
+                <Text style={styles.title}>{t('task')}</Text>
                 <TouchableOpacity onPress={() => setEditing(!editing)}>
                     <Ionicons name={editing ? "checkmark-circle" : "create"} size={32} color="#6EC5E9" />
                 </TouchableOpacity>
@@ -45,7 +48,7 @@ export function FinishItems({ finishedTasks, onTasksUpdated }) {
             <ScrollView contentContainerStyle={styles.scrollContainer}>
                 {finishedTasks.length === 0 ? (
                     // Si aucune tâche n'est présente
-                    <Text style={styles.noTasksText}>Aucune tâche complète</Text>
+                    <Text style={styles.noTasksText}>{t('nonetask')}</Text>
                 ) : (
                     finishedTasks.map((task, index) => {
                         const isFirst = index === 0; // Si c'est le premier élément

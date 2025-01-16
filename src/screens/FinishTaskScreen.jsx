@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'; // N'oubliez pas d'ajouter useState
 import { StatusBar, StyleSheet, View } from 'react-native';
-import {FinishItems} from '../components/FinishItems'; // Importer FinishItems
+import { FinishItems } from '../components/FinishItems'; // Importer FinishItems
 import { getId } from '../utils/LocalStorage';
 import axios from 'axios';
 
 export default function FinishedTasksScreen() {
-  // Définir l'état pour les tâches terminées
+  const { t } = useTranslation();
+
   const [finishedTasks, setFinishedTasks] = useState([]);
 
   const [userId, setUserId] = useState(null); // Définir l'état de userId
@@ -31,7 +32,7 @@ export default function FinishedTasksScreen() {
 
       fetchTasks(); // Appel de la fonction pour récupérer les tâches terminées
     }
-  }, );
+  },);
 
   const refreshTasks = async () => {
     if (userId) {

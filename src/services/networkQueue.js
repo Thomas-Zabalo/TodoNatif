@@ -6,8 +6,18 @@ class NetworkQueue {
     // Ajout d'une action dans la file
     static async addAction(action) {
         const queue = await NetworkQueue.getQueue();
-        queue.push(action);
-        await AsyncStorage.setItem(NetworkQueue.QUEUE_KEY, JSON.stringify(queue));
+        const isDuplicate = queue.some(
+            (queuedAction) =>
+                queuedAction.type === action.type &&
+                JSON.stringify(queuedAction.payload) === JSON.stringify(action.payload)
+        );
+
+        if (!isDuplicate) {
+            queue.push(action);
+            await AsyncStorage.setItem(NetworkQueue.QUEUE_KEY, JSON.stringify(queue));
+        } else {
+            console.log('Action déjà présente dans la file:', action);
+        }
     }
 
     // Récupération de la file
@@ -33,24 +43,26 @@ class NetworkQueue {
     // Simule l'exécution de l'action (par exemple, ajout/modification/suppression d'une tâche)
     static async executeAction(action) {
         try {
-            // Vous pouvez remplacer cette partie par un appel à l'API pour effectuer l'opération
             console.log('Exécution de l\'action:', action);
-            // Par exemple, pour une action d'ajout de tâche
+
             if (action.type === 'ADD') {
-                // Exemple : await api.addTask(action.payload);
+                // Appel API pour ajouter
+                await axios.post('https://zabalo.alwaysdata.net/todoapp/index.php/tasks', action.payload);
             } else if (action.type === 'UPDATE') {
-                // Exemple : await api.updateTask(action.payload);
+                // Appel API pour mettre à jour
+                await axios.put(`https://zabalo.alwaysdata.net/todoapp/index.php/tasks/${action.payload.id}`, action.payload);
             } else if (action.type === 'DELETE') {
-                // Exemple : await api.deleteTask(action.payload);
+                // Appel API pour supprimer
+                await axios.delete(`https://zabalo.alwaysdata.net/todoapp/index.php/tasks/${action.payload.id}`);
             }
 
-            // Si l'action réussie, vous pouvez supprimer cette action de la file
+            // Supprime l'action réussie de la file
             const queue = await NetworkQueue.getQueue();
             const filteredQueue = queue.filter(item => item !== action);
             await AsyncStorage.setItem(NetworkQueue.QUEUE_KEY, JSON.stringify(filteredQueue));
-
         } catch (error) {
             console.error('Erreur lors de l\'exécution de l\'action:', error);
+            // Si une erreur survient, garde l'action dans la file
         }
     }
 }

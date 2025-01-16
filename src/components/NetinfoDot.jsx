@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
 import { MotiView } from 'moti'; // Import de MotiView
 import { Easing } from 'react-native-reanimated'; // Import de Easing
@@ -20,23 +20,20 @@ const NetworkStatus = () => {
   }, []);
 
   return (
-    <View style={{ flexDirection: 'row', justifyContent: 'flex-end', padding: 10 }}>
+    <View>
       <View style={styles.container}>
-        {[...Array(3)].map((_, index) => (
-          <MotiView
-            key={index}  // Assurez-vous d'ajouter une clé pour chaque élément dans une liste
-            from={{ opacity: 1, scale: 0.2 }}
-            animate={{ opacity: 0.5, scale: isConnected ? 2.5 : 1 }}
-            transition={{
-              type: 'timing',
-              duration: 2000,
-              easing: Easing.out(Easing.ease),
-              delay: index * 600,
-              repeat: Infinity,
-              repeatReverse: true,
-            }}
-            style={[StyleSheet.absoluteFillObject, styles.dot, { backgroundColor: isConnected ? 'lightgreen' : 'red' }]} />
-        ))}
+        <MotiView
+          from={{ opacity: 1, scale: 0.2 }}
+          animate={{ opacity: 0.5, scale: isConnected ? 2.5 : 1 }}
+          transition={{
+            type: 'timing',
+            duration: 2000,
+            easing: Easing.out(Easing.ease),
+            repeat: Infinity,
+            repeatReverse: true,
+          }}
+          style={[styles.dot, { backgroundColor: isConnected ? 'lightgreen' : 'red' }]} // Correction du style
+        />
       </View>
     </View>
   );

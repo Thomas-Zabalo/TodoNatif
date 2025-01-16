@@ -1,15 +1,17 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { TodoItem } from './TodoItems';
 import { Ionicons } from 'react-native-vector-icons';
+import { useTranslation } from 'react-i18next';
 
 export function TodoList({ todo, onEdit, onDelete, onComplete, navigation, sortOnName, setModalVisible }) {
+  const { t } = useTranslation();
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.sort}>
-          <Text style={styles.title}>Mes tâches</Text>
+          <Text style={styles.title}>{t('task')}</Text>
           <TouchableOpacity onPress={sortOnName} style={{ marginLeft: 15 }}>
             <Ionicons name="funnel" size={24} color="#000000" />
           </TouchableOpacity>

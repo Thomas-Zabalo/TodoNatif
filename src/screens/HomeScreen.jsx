@@ -5,8 +5,14 @@ import { Picker } from '@react-native-picker/picker';
 import { TodoContext } from '../context/TodosContext';
 import { getId, setPref } from '../utils/LocalStorage';
 import NetworkStatus from '../components/NetinfoDot';
+import LangagePref from '../components/LangagePref';
+import { useTranslation } from 'react-i18next';
+
 
 export default function HomeScreen({ navigation }) {
+  const { t } = useTranslation();
+
+
   const {
     fetchLimit,
     setFetchLimit,
@@ -118,8 +124,11 @@ export default function HomeScreen({ navigation }) {
         showHideTransition="slide"
         hidden="visible"
       />
-      <NetworkStatus />
-      
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 10 }}>
+        <LangagePref />
+        <NetworkStatus />
+      </View>
+
       <TodoList
         todo={sortedTasks}
         onComplete={toggleTaskCompletion}
@@ -133,7 +142,7 @@ export default function HomeScreen({ navigation }) {
         <View style={styles.alltasks}>
           <TouchableOpacity onPress={OnChangeLimit}>
             <Text style={{ color: 'blue' }}>
-              {fetchLimit ? 'Voir plus' : 'Voir moins'}
+              {fetchLimit ? t('more') : t('less')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -181,10 +190,10 @@ export default function HomeScreen({ navigation }) {
           backgroundColor: Platform.OS === 'ios' ? 'rgba(0, 0, 0, 0.5)' : 'rgba(0, 0, 0, 0.8)'
         }]}>
           <View style={styles.modal}>
-            <Text style={styles.modalTitle}>Ajouter une tâche</Text>
+            <Text style={styles.modalTitle}>{t('addtask')}</Text>
             <TextInput
               style={styles.input}
-              placeholder="Nom de la tâche"
+              placeholder={t('nametask')}
               value={newName}
               onChangeText={setNewName}
             />
@@ -211,8 +220,8 @@ export default function HomeScreen({ navigation }) {
             </Picker>
 
             <View style={styles.modalButtons}>
-              <Button title="Annuler" color="red" onPress={() => setModalVisible(false)} />
-              <Button title="Ajouter" onPress={handleAdd} />
+              <Button title={t('cancel')} color="red" onPress={() => setModalVisible(false)} />
+              <Button title={t('add')} onPress={handleAdd} />
             </View>
           </View>
         </View>
