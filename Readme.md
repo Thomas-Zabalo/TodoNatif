@@ -1,4 +1,3 @@
-```markdown
 # Todo App
 
 ## Description
@@ -31,4 +30,3 @@ L'application fonctionne en utilisant un contexte (`TodoContext`) pour gérer l'
 
 
 Il se peut que quelque bug survienne à cause du picker
-```
