@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
 import { MotiView } from 'moti'; // Import de MotiView
+import { Easing } from 'react-native-reanimated'; // Import de Easing
 
 const NetworkStatus = () => {
   const [isConnected, setIsConnected] = useState(true);
@@ -19,24 +20,24 @@ const NetworkStatus = () => {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <MotiView
-        from={{ scale: 1 }}
-        animate={{ scale: isConnected ? 1.5 : 1 }} // Animation de mise à l'échelle
-        transition={{
-          type: 'timing', // Type de transition
-          duration: 1000, // Durée de l'animation
-          repeat: Infinity, // Répéter indéfiniment
-          repeatReverse: true, // Inverser l'animation à chaque répétition
-        }}
-        style={[styles.dot, { backgroundColor: isConnected ? 'green' : 'red' }]} // Changez la couleur du dot selon l'état de la connexion
-      >
-        {isConnected ? (
-          <Text style={styles.text}>{connectionType}</Text>
-        ) : (
-          <Text style={styles.text}>Déconnecté</Text>
-        )}
-      </MotiView>
+    <View style={{ flexDirection: 'row', justifyContent: 'flex-end', padding: 10 }}>
+      <View style={styles.container}>
+        {[...Array(3)].map((_, index) => (
+          <MotiView
+            key={index}  // Assurez-vous d'ajouter une clé pour chaque élément dans une liste
+            from={{ opacity: 1, scale: 0.2 }}
+            animate={{ opacity: 0.5, scale: isConnected ? 2.5 : 1 }}
+            transition={{
+              type: 'timing',
+              duration: 2000,
+              easing: Easing.out(Easing.ease),
+              delay: index * 600,
+              repeat: Infinity,
+              repeatReverse: true,
+            }}
+            style={[StyleSheet.absoluteFillObject, styles.dot, { backgroundColor: isConnected ? 'lightgreen' : 'red' }]} />
+        ))}
+      </View>
     </View>
   );
 };
@@ -44,14 +45,12 @@ const NetworkStatus = () => {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: 'flex-end',
     padding: 10,
-    backgroundColor: 'lightgreen',
   },
   dot: {
-    width: 20,
-    height: 20,
+    width: 10,
+    height: 10,
     borderRadius: 10, // Cercle
     marginRight: 10,
   },

@@ -4,7 +4,7 @@ import { TodoList } from '../components/TodoList';
 import { Picker } from '@react-native-picker/picker';
 import { TodoContext } from '../context/TodosContext';
 import { getId, setPref } from '../utils/LocalStorage';
-import NetworkStatus from '../components/Netinfo';
+import NetworkStatus from '../components/NetinfoDot';
 
 export default function HomeScreen({ navigation }) {
   const {
@@ -47,16 +47,6 @@ export default function HomeScreen({ navigation }) {
       return b.titre.localeCompare(a.titre);  // Tri descendant (par titre)
     }
   });
-
-  // Si vous voulez trier par priorité, vous pouvez aussi faire ça :
-  const sortedByPriority = [...tasksToDisplay].sort((a, b) => {
-    if (a.importance_id > b.importance_id) return 1;
-    if (a.importance_id < b.importance_id) return -1;
-    return 0;
-  });
-
-  // Vous pouvez choisir quel tri appliquer : tri par titre ou tri par priorité
-  const tasksToDisplaySorted = pref === "priority" ? sortedByPriority : sortedTasks;
 
   const sortOnName = async () => {
     const newPref = pref === "asc" ? "desc" : "asc"; // Détermine la préférence de tri
@@ -129,6 +119,7 @@ export default function HomeScreen({ navigation }) {
         hidden="visible"
       />
       <NetworkStatus />
+      
       <TodoList
         todo={sortedTasks}
         onComplete={toggleTaskCompletion}

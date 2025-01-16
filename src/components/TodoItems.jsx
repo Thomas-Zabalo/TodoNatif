@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Checkbox from 'expo-checkbox';
-import axios from 'axios';
+
 
 export function TodoItem({ task, onEdit, onDelete, onComplete, navigation, isFirst, isLast, singleItem }) {
   const [isSelected, setIsSelected] = useState(task.complete === 1); // Initialiser l'état avec la valeur de 'task.complete'
@@ -12,23 +12,15 @@ export function TodoItem({ task, onEdit, onDelete, onComplete, navigation, isFir
 
   const handleSelect = async () => {
     try {
-      // Appel de l'API pour mettre à jour le statut de la tâche
-      const response = await axios.put(`https://zabalo.alwaysdata.net/todoapp/index.php/taskscomplete/${task.id}`);
-      const data = response.data;
-      if (response.status === 200) {
-        setIsSelected(!isSelected);
-        task.complete = data.complete;
-      } else {
-        console.error("Erreur lors de la mise à jour de la tâche:", data.error);
-      }
+      // Appel à la fonction du contexte qui met à jour l'état de la tâche
+      await onComplete(task.id); // Cela va déclencher toggleTaskCompletion
+      setIsSelected(!isSelected); // Inverser localement l'état de la checkbox
     } catch (error) {
       console.error("Erreur de connexion:", error);
       Alert.alert("Erreur", "Impossible de mettre à jour la tâche.");
     }
-
-    // Changer l'état local après la mise à jour
-    setIsSelected(!isSelected); // Inverser la sélection après le clic
   };
+
 
   return (
     <TouchableOpacity
